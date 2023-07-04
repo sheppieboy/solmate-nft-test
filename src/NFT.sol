@@ -15,6 +15,11 @@ contract NFT is ERC721 {
     ) ERC721(_name, _symbol) {}
 
     //state changing functions
+    function mintTo(address recipient) public payable returns (uint256) {
+        uint256 newItemId = ++currentTokenId;
+        _safeMint(recipient, newItemId);
+        return newItemId;
+    }
 
     //view functions
 }
