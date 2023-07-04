@@ -22,4 +22,9 @@ contract NFT is ERC721 {
     }
 
     //view functions
+    function tokenURI(
+        uint256 id
+    ) public view virtual override returns (string memory) {
+        return Strings.toString(id);
+    }
 }
