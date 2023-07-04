@@ -7,6 +7,7 @@ import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 error MintPriceNotPaid();
 error MaxSupply();
+error NonExistentTokenURI();
 
 contract NFT is ERC721, Ownable {
     using Strings for uint256;
@@ -40,8 +41,14 @@ contract NFT is ERC721, Ownable {
 
     //view functions
     function tokenURI(
-        uint256 id
+        uint256 tokenId
     ) public view virtual override returns (string memory) {
-        return Strings.toString(id);
+        if (ownerOf(tokenId) == address(0)) {
+            revert NonExistentTokenURI();
+        }
+        return
+            bytes(baseURI).length > 0
+                ? string(abi.encodePacked(baseURI, tokenId.toString()))
+                : "";
     }
 }
