@@ -51,4 +51,11 @@ contract NFT is ERC721, Ownable {
                 ? string(abi.encodePacked(baseURI, tokenId.toString()))
                 : "";
     }
+
+    //withdraw function
+    function withdrawPayments(address payable payee) external onlyOwner {
+        uint256 balance = address(this).balance;
+        (bool successTx, ) = payee.call{value: balance}("");
+        require(successTx, "failed to withdraw balance of contract");
+    }
 }
