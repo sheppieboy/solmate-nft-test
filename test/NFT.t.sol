@@ -37,7 +37,10 @@ contract NFTTest is Test {
         nft.mintTo{value: 0.08 ether}(address(1));
     }
 
-    function test_RevertMintToZeroAddress() public {}
+    function test_RevertMintToZeroAddress() public {
+        vm.expectRevert("INVALID_REVERT");
+        nft.mintTo{value: 0.08 ether}(address(0));
+    }
 
     function test_NewMintOwnerRegistered() public {}
 
