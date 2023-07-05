@@ -55,7 +55,26 @@ contract NFTTest is Test {
         assertEq(address(ownerOfTokenIdOne), address(1));
     }
 
-    function test_BalanceIncremented() public {}
+    function test_BalanceIncremented() public {
+        nft.mintTo{value: 0.08 ether}(address(1));
+        uint256 slotBalance = stdstore
+            .target(address(nft))
+            .sig(nft.balanceOf.selector)
+            .with_key(address(1))
+            .find();
+
+        uint256 balanceFirstMint = uint256(
+            vm.load(address(nft), bytes32(slotBalance))
+        );
+        assertEq(balanceFirstMint, 1);
+
+        nft.mintTo{value: 0.08 ether}(address(1));
+        uint256 balanceSecondMint = uint256(
+            vm.load(address(nft), bytes32(slotBalance))
+        );
+
+        assertEq(balanceSecondMint, 2);
+    }
 
     function test_SafeContractReciever() public {}
 
