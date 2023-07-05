@@ -29,16 +29,15 @@ contract NFTTest is Test {
             .target(address(nft))
             .sig("currentTokenId()")
             .find();
-
         bytes32 loc = bytes32(slot);
-        bytes32 mockedCurrentTokenId = bytes32(abi.encode(1000));
+        bytes32 mockedCurrentTokenId = bytes32(abi.encode(10000));
         vm.store(address(nft), loc, mockedCurrentTokenId);
         vm.expectRevert(MaxSupply.selector);
         nft.mintTo{value: 0.08 ether}(address(1));
     }
 
     function test_RevertMintToZeroAddress() public {
-        vm.expectRevert("INVALID_REVERT");
+        vm.expectRevert("INVALID_RECIPIENT");
         nft.mintTo{value: 0.08 ether}(address(0));
     }
 
@@ -108,12 +107,14 @@ contract NFTTest is Test {
     }
 
     function test_WithdrawalFailsAsNotOwner() public {
-        Reciever reciever = new Reciever();
-        nft.mintTo{value: nft.MINT_PRICE()}(address(reciever));
+        Reciever receiver = new Reciever();
+        nft.mintTo{value: nft.MINT_PRICE()}(address(receiver));
+        // Check that the balance of the contract is correct
         assertEq(address(nft).balance, nft.MINT_PRICE());
-        vm.expectRevert("ownable:m caller is not the owner");
-        vm.startPrank(address(0xd3ead));
-        nft.withdrawPayments(payable(address(0xd3ead)));
+        // Confirm that a non-owner cannot withdraw
+        vm.expectRevert("Ownable: caller is not the owner");
+        vm.startPrank(address(0xd3ad));
+        nft.withdrawPayments(payable(address(0xd3ad)));
         vm.stopPrank();
     }
 }
