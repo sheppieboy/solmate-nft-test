@@ -15,9 +15,14 @@ contract NFTTest is Test {
     }
 
     //Tests for mintTo function
-    function test_RevertMintWithoutValue() public {}
+    function test_RevertMintWithoutValue() public {
+        vm.expectRevert(MintPriceNotPaid.selector);
+        nft.mintTo(address(1));
+    }
 
-    function test_MintPricePaid() public {}
+    function test_MintPricePaid() public {
+        nft.mintTo{value: 0.08 ether}(address(1));
+    }
 
     function test_RevertMintMaxSupplyReached() public {}
 
