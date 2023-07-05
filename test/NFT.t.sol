@@ -42,7 +42,18 @@ contract NFTTest is Test {
         nft.mintTo{value: 0.08 ether}(address(0));
     }
 
-    function test_NewMintOwnerRegistered() public {}
+    function test_NewMintOwnerRegistered() public {
+        nft.mintTo{value: 0.08 ether}(address(1));
+        uint256 slotOfNewOwner = stdstore
+            .target(address(nft))
+            .sig(nft.ownerOf.selector)
+            .with_key(1)
+            .find();
+        uint160 ownerOfTokenIdOne = uint160(
+            uint256(vm.load(address(nft), bytes32(abi.encode(slotOfNewOwner))))
+        );
+        assertEq(address(ownerOfTokenIdOne), address(1));
+    }
 
     function test_BalanceIncremented() public {}
 
