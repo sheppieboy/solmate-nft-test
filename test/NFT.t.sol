@@ -89,7 +89,11 @@ contract NFTTest is Test {
         assertEq(balance, 1);
     }
 
-    function test_RevertUnSafeContractReceiver() public {}
+    function test_RevertUnSafeContractReceiver() public {
+        vm.etch(address(1), bytes("mock code"));
+        vm.expectRevert(bytes(""));
+        nft.mintTo{value: 0.08 ether}(address(1));
+    }
 
     function test_WithdrawalWorksAsOwner() public {}
 
