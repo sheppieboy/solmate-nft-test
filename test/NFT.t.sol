@@ -24,7 +24,18 @@ contract NFTTest is Test {
         nft.mintTo{value: 0.08 ether}(address(1));
     }
 
-    function test_RevertMintMaxSupplyReached() public {}
+    function test_RevertMintMaxSupplyReached() public {
+        uint256 slot = stdstore
+            .target(address(nft))
+            .sig("currentTokenId()")
+            .find();
+
+        bytes32 loc = bytes32(slot);
+        bytes32 mockedCurrentTokenId = bytes32(abi.encode(1000));
+        vm.store(address(nft), loc, mockedCurrentTokenId);
+        vm.expectRevert(MaxSupply.selector);
+        nft.mintTo{value: 0.08 ether}(address(1));
+    }
 
     function test_RevertMintToZeroAddress() public {}
 
