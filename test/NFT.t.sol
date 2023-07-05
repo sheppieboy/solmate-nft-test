@@ -95,7 +95,17 @@ contract NFTTest is Test {
         nft.mintTo{value: 0.08 ether}(address(1));
     }
 
-    function test_WithdrawalWorksAsOwner() public {}
+    function test_WithdrawalWorksAsOwner() public {
+        Reciever reciever = new Reciever();
+        address payable payee = payable(address(0x1337));
+        uint256 priorPayeeBalance = payee.balance;
+        nft.mintTo{value: nft.MINT_PRICE()}(address(reciever));
+        assertEq(address(nft).balance, nft.MINT_PRICE());
+        uint256 nftBalance = address(nft).balance;
+
+        nft.withdrawPayments(payee);
+        assertEq(payee.balance, priorPayeeBalance + nftBalance);
+    }
 
     function test_WithdrawalFailsAsNotOwner() public {}
 }
